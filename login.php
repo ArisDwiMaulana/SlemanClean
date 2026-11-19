@@ -1,31 +1,45 @@
 <?php
-require_once __DIR__ . '/includes/auth_guard.php';
+  require_once __DIR__ . '/includes/auth_guard.php';
+  require_once __DIR__ . '/koneksi.php';
 
-// =====================================================================
-// LOGIN DEMO (hapus blok ini saat backend jadi, ganti dengan cek database)
-//  - Admin     : username "admin"  | password "admin123"
-//  - Pelanggan : harus daftar dulu di register.php (disimpan sementara di session)
-// =====================================================================
-$error = '';
-$info  = isset($_GET['daftar']) ? 'Pendaftaran berhasil. Silakan masuk dengan akun Anda.' : '';
-if (DEMO_MODE && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $id   = strtolower(trim($_POST['username'] ?? ''));
-    $pw   = $_POST['password'] ?? '';
-    $akun = $_SESSION['demo_users'][$id] ?? null;
-    if ($id === 'admin' && $pw === 'admin123') {
-        $_SESSION['user'] = ['nama' => 'Admin SlemanClean', 'email' => 'admin', 'role' => 'admin'];
-        header('Location: dashboard.php'); exit;
-    } elseif ($akun && $akun['password'] === $pw) {
-        unset($akun['password']);
-        $_SESSION['user'] = $akun + ['role' => 'customer'];
-        header('Location: dashboard.php'); exit;
-    }
-    $error = 'Email/username atau kata sandi salah, atau akun belum terdaftar.';
-}
+  if (current_user()) {
+      header('Location: dashboard.php');
+      exit;
+  }
 
-$judul_halaman = 'Masuk – SlemanClean';
-include __DIR__ . '/includes/header.php';
-?>
+  $error = '';
+  $info  = isset($_GET['daftar']) ? 'Pendaftaran berhasil. Silakan masuk dengan akun Anda.' : '';
+
+  if (isset($_POST["login"])) {
+      $username = trim(mysqli_real_escape_string($koneksi, $_POST['username'] ?? ''));
+      $password = $_POST['password'] ?? '';
+      $query = "SELECT * FROM users
+                WHERE email = '$username'
+                   OR (role = 'admin' AND '$username' = 'admin')
+                LIMIT 1";
+      $result = mysqli_query($koneksi, $query);
+      if ($result && mysqli_num_rows($result) > 0) {
+          $user = mysqli_fetch_assoc($result);
+          if (password_verify($password, $user['password'])) {
+              $_SESSION['user'] = [
+                  'id'        => (int)$user['id'],
+                  'nama'      => $user['nama'],
+                  'email'     => $user['email'],
+                  'wa'        => $user['no_wa'],
+                  'kecamatan' => $user['kecamatan_asal'],
+                  'alamat'    => $user['alamat_asal'],
+                  'role'      => $user['role'] // 'admin' atau 'customer'
+              ];
+              header('Location: dashboard.php');
+              exit;
+          }
+      }
+      $error = 'Email/username atau kata sandi salah.';
+  }
+
+  $judul_halaman = 'Masuk – SlemanClean';
+  include __DIR__ . '/includes/header.php';
+  ?>
 <main class="page"><div class="auth-wrap text-center">
   <div class="icon-badge"><i class="bi bi-lock-fill"></i></div>
   <h1 class="h2 fw-bold">Selamat Datang Kembali</h1>
@@ -43,7 +57,7 @@ include __DIR__ . '/includes/header.php';
     <div class="input-group mb-4"><span class="input-group-text"><i class="bi bi-key-fill"></i></span>
       <input type="password" id="password" name="password" class="form-control" placeholder="••••••••" autocomplete="current-password" required>
       <button class="btn btn-outline-secondary" type="button" id="toggle" aria-label="Tampilkan sandi"><i class="bi bi-eye"></i></button></div>
-    <button class="btn btn-primary w-100 py-2" type="submit"><i class="bi bi-box-arrow-in-right me-1"></i>Masuk ke Akun</button>
+    <button class="btn btn-primary w-100 py-2" type="submit" name="login"><i class="bi bi-box-arrow-in-right me-1"></i>Masuk ke Akun</button>
     <hr><p class="text-center mb-0 small">Belum memiliki akun SlemanClean? <a href="register.php" class="fw-bold text-success text-decoration-none">Daftar Sekarang</a></p>
   </form>
 </div></main>

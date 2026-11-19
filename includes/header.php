@@ -1,6 +1,6 @@
 <?php
 require_once __DIR__ . '/auth_guard.php';
-require_once __DIR__ . '/mock_data.php';
+require_once __DIR__ . '/functions.php';
 ?>
 <!DOCTYPE html>
 <html lang="id">

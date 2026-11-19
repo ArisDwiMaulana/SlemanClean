@@ -1,17 +1,51 @@
 <?php
 require_once __DIR__ . '/includes/auth_guard.php';
-// DEMO saja: akun disimpan sementara di session. Backend: simpan ke tabel users (password di-hash).
-$error = '';
-if (DEMO_MODE && $_SERVER['REQUEST_METHOD'] === 'POST') {
-    $email = strtolower(trim($_POST['email'] ?? ''));
-    if ($email === 'admin' || isset($_SESSION['demo_users'][$email])) {
-        $error = 'Email ini sudah terdaftar. Silakan masuk.';
-    } else {
-        $_SESSION['demo_users'][$email] = ['nama' => trim($_POST['nama'] ?? ''), 'email' => $email, 'wa' => trim($_POST['whatsapp'] ?? ''),
-            'kecamatan' => $_POST['kecamatan'] ?? '', 'alamat' => trim($_POST['alamat'] ?? ''), 'password' => $_POST['password'] ?? ''];
-        header('Location: login.php?daftar=1'); exit;
-    }
+require_once __DIR__ . '/koneksi.php';
+
+if (current_user()) {
+  header("location: dashboard.php");
+  exit();
 }
+
+$query = mysqli_query($koneksi, "SELECT nama FROM kecamatan ORDER BY id ASC");
+$kecamatan = [];
+while($row = mysqli_fetch_assoc($query)){
+  $kecamatan[] = $row["nama"];
+}
+
+if (isset($_POST["register"])) {
+      // Ambil dan bersihkan data input agar aman dari karakter berbahaya (SQL Injection)
+      $nama      = trim(mysqli_real_escape_string($koneksi, $_POST['nama'] ?? ''));
+      $email     = strtolower(trim(mysqli_real_escape_string($koneksi, $_POST['email'] ?? '')));
+      $whatsapp  = trim(mysqli_real_escape_string($koneksi, $_POST['whatsapp'] ?? ''));
+      $kec_input = trim(mysqli_real_escape_string($koneksi, $_POST['kecamatan'] ?? ''));
+      $alamat    = trim(mysqli_real_escape_string($koneksi, $_POST['alamat'] ?? ''));
+      $password  = $_POST['password'] ?? '';
+      $password2 = $_POST['password2'] ?? '';
+
+      if ($password !== $password2) {
+          $error = 'Kata sandi dan ulangi sandi tidak cocok.';
+      } elseif (strlen($password) < 6) {
+          $error = 'Kata sandi minimal harus 6 karakter.';
+      } else {
+          $cek_email = mysqli_query($koneksi, "SELECT id FROM users WHERE email = '$email'");
+          if (mysqli_num_rows($cek_email) > 0) {
+              $error = 'Email ini sudah terdaftar. Silakan gunakan email lain atau masuk.';
+          } else {
+              $hash_password = password_hash($password, PASSWORD_DEFAULT);
+              $sql_insert = "INSERT INTO users (nama, email, password, no_wa, kecamatan_asal, alamat_asal, role)
+                             VALUES ('$nama', '$email', '$hash_password', '$whatsapp', '$kec_input', '$alamat', 'customer')";
+  
+              if (mysqli_query($koneksi, $sql_insert)) {
+                  header('Location: login.php?daftar=1');
+                  exit;
+              } else {
+                  $error = 'Terjadi kesalahan sistem: ' . mysqli_error($koneksi);
+              }
+          }
+      }
+  }
+
 $judul_halaman = 'Daftar Akun – SlemanClean';
 include __DIR__ . '/includes/header.php';
 ?>
@@ -44,15 +78,8 @@ include __DIR__ . '/includes/header.php';
       <div class="col-md-6"><label class="lbl mb-1">Ulangi sandi <span class="text-danger">*</span></label>
         <div class="input-group"><span class="input-group-text"><i class="bi bi-check2-all"></i></span><input type="password" name="password2" id="p2" class="form-control" placeholder="Ketik ulang kata sandi" required></div></div>
     </div>
-    <button class="btn btn-primary w-100 py-2" type="submit"><i class="bi bi-person-check me-1"></i>Daftar Sekarang</button>
+    <button class="btn btn-primary w-100 py-2" type="submit" name="register"><i class="bi bi-person-check me-1"></i>Daftar Sekarang</button>
     <hr><p class="text-center mb-0 small">Sudah memiliki akun SlemanClean? <a href="login.php" class="fw-bold text-success text-decoration-none">Masuk ke Akun Anda</a></p>
   </form>
 </div></main>
-<script>
-document.getElementById('formDaftar').addEventListener('submit', e => {
-  const p2 = document.getElementById('p2');
-  p2.setCustomValidity(p1.value === p2.value ? '' : 'Kata sandi tidak sama');
-  if (!e.target.checkValidity()) { e.preventDefault(); e.target.reportValidity(); }
-});
-</script>
 <?php include __DIR__ . '/includes/footer.php'; ?>
