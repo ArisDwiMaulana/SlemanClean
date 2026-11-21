@@ -9,9 +9,9 @@ $res_pkt = mysqli_query($koneksi, 'SELECT * FROM paket_layanan');
 $paket = [];
 while ($row = mysqli_fetch_assoc($res_pkt)) {
     $paket[$row['id']] = [
-        'nama' => $row['nama'], 
-        'harga' => (int) $row['harga'], 
-        'durasi' => $row['durasi']
+        'nama' => $row['nama'],
+        'harga' => (int) $row['harga'],
+        'durasi' => $row['durasi'],
     ];
 }
 

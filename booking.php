@@ -23,7 +23,7 @@ while ($row = mysqli_fetch_assoc($res_kec)) {
     $kecamatan[] = $row['nama'];
 }
 
-// Ambil slot waktu 
+// Ambil slot waktu
 $res_slot = mysqli_query($koneksi, 'SELECT * FROM slot_waktu ORDER BY id ASC');
 $slots = [];
 while ($row = mysqli_fetch_assoc($res_slot)) {
