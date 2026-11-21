@@ -1,13 +1,49 @@
 <?php
 require_once __DIR__ . '/includes/auth_guard.php';
+require_once __DIR__ . '/koneksi.php';
 require_login();
 $user = current_user();
+
+// Ambil data paket
+$res_pkt = mysqli_query($koneksi, 'SELECT * FROM paket_layanan');
+$paket = [];
+while ($row = mysqli_fetch_assoc($res_pkt)) {
+    $paket[$row['id']] = [
+        'nama' => $row['nama'],
+        'harga' => (int) $row['harga'],
+        'durasi' => $row['durasi'],
+        'desk' => $row['deskripsi'],
+    ];
+}
+
+// Ambil data kecamatan
+$res_kec = mysqli_query($koneksi, 'SELECT nama FROM kecamatan ORDER BY id ASC');
+$kecamatan = [];
+while ($row = mysqli_fetch_assoc($res_kec)) {
+    $kecamatan[] = $row['nama'];
+}
+
+// Ambil slot waktu 
+$res_slot = mysqli_query($koneksi, 'SELECT * FROM slot_waktu ORDER BY id ASC');
+$slots = [];
+while ($row = mysqli_fetch_assoc($res_slot)) {
+    $slots[$row['id']] = [$row['nama'], $row['jam']];
+}
+
 $judul_halaman = 'Form Pemesanan – SlemanClean';
 $halaman_aktif = 'booking';
 $page_js = 'booking.js';
 include __DIR__ . '/includes/header.php';
-$pilih = $_GET['paket'] ?? 'standard';
+
+// Mengambil data form sebelumnya (jika menekan ubah pesanan di halaman pembayaran)
+$pilih = !empty($_GET['paket']) ? $_GET['paket'] : 'standard';
+$kec_pilih = !empty($_GET['kecamatan']) ? $_GET['kecamatan'] : 'Depok';
+$alamat_val = $_GET['alamat'] ?? '';
+$tgl_val = !empty($_GET['tanggal']) ? $_GET['tanggal'] : date('Y-m-d');
+$slot_pilih = (int) (!empty($_GET['slot']) ? $_GET['slot'] : 1);
+$catatan_val = $_GET['catatan'] ?? '';
 ?>
+
 <main class="page">
     <div class="container">
         <nav class="small text-muted2 mb-2"><a href="index.php" class="text-muted2 text-decoration-none">Beranda</a> /
@@ -22,7 +58,8 @@ $pilih = $_GET['paket'] ?? 'standard';
             <div class="col-lg-8">
                 <section class="panel p-4 mb-3">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2 class="h6 fw-bold"><i class="bi bi-person-fill text-success me-2"></i>1. Informasi Pemesan
+                        <h2 class="h6 fw-bold"><i class="bi bi-person-fill text-success me-2"></i>1. Informasi
+                            Pemesan
                         </h2><span class="pill pill-success"><i class="bi bi-check-circle-fill"></i> Data Sesi
                             Terverifikasi</span>
                     </div>
@@ -58,13 +95,15 @@ $pilih = $_GET['paket'] ?? 'standard';
 
                 <section class="panel p-4 mb-3">
                     <div class="d-flex justify-content-between mb-3">
-                        <h2 class="h6 fw-bold"><i class="bi bi-geo-alt-fill text-success me-2"></i>3. Lokasi Pengerjaan
+                        <h2 class="h6 fw-bold"><i class="bi bi-geo-alt-fill text-success me-2"></i>3. Lokasi
+                            Pengerjaan
                             di Sleman</h2><small class="text-muted2">Pusat Hub: Kec. Depok</small>
                     </div>
                     <label class="lbl mb-1">Kecamatan tujuan <span class="text-danger">*</span></label>
                     <select name="kecamatan" id="kec" class="form-select" required>
                         <?php foreach ($kecamatan as $k): ?>
-                        <option value="<?= $k ?>" <?= $k === 'Depok' ? 'selected' : '' ?>>Kec. <?= $k ?></option>
+                        <option value="<?= htmlspecialchars($k) ?>" <?= $k === $kec_pilih ? 'selected' : '' ?>>Kec.
+                            <?= htmlspecialchars($k) ?></option>
                         <?php endforeach; ?>
                     </select>
                     <div class="form-text mb-3">Harga layanan sama untuk seluruh kecamatan di Sleman, tanpa biaya
@@ -72,33 +111,35 @@ $pilih = $_GET['paket'] ?? 'standard';
                     <label class="lbl mb-1">Alamat lengkap &amp; patokan rumah <span
                             class="text-danger">*</span></label>
                     <textarea name="alamat" rows="3" class="form-control"
-                        placeholder="Contoh: Perum Condongcatur Asri Blok B-4, Depok, Sleman" required></textarea>
+                        placeholder="Contoh: Perum Condongcatur Asri Blok B-4, Depok, Sleman" required><?= htmlspecialchars($alamat_val) ?></textarea>
                 </section>
 
                 <section class="panel p-4">
                     <div class="d-flex justify-content-between mb-3">
                         <h2 class="h6 fw-bold"><i class="bi bi-calendar-event-fill text-success me-2"></i>4. Jadwal
-                            &amp; Slot Waktu Pengerjaan</h2><small class="text-danger fw-bold">* Wajib Dipilih</small>
+                            &amp; Slot Waktu Pengerjaan</h2><small class="text-danger fw-bold">* Wajib
+                            Dipilih</small>
                     </div>
                     <div class="row g-3 mb-3">
                         <div class="col-md-6"><label class="lbl mb-1">Tanggal pengerjaan <span
                                     class="text-danger">*</span></label>
                             <input type="date" name="tanggal" class="form-control" min="<?= date('Y-m-d') ?>"
-                                value="<?= date('Y-m-d') ?>" required>
+                                value="<?= htmlspecialchars($tgl_val) ?>" required>
                             <div class="form-text">Minimal pemesanan untuk hari ini.</div>
                         </div>
                         <div class="col-md-6 calc shadow-none"><label class="lbl mb-1">Pilihan slot jam <span
                                     class="text-danger">*</span></label>
                             <?php foreach ($slots as $n => [$nm, $jam]): ?>
                             <label class="opt py-2 mb-2"><input class="form-check-input me-2" type="radio"
-                                    name="slot" value="<?= $n ?>" <?= $n === 1 ? 'checked' : '' ?>><?= $nm ?><span
+                                    name="slot" value="<?= $n ?>"
+                                    <?= (int) $n === $slot_pilih ? 'checked' : '' ?>><?= $nm ?><span
                                     class="float-end small text-muted2"><?= $jam ?> WIB</span></label>
                             <?php endforeach; ?>
                         </div>
                     </div>
                     <label class="lbl mb-1">Catatan khusus untuk tim pembersih <small
                             class="text-muted fw-normal text-lowercase">(opsional)</small></label>
-                    <input name="catatan" class="form-control"
+                    <input name="catatan" class="form-control" value="<?= htmlspecialchars($catatan_val) ?>"
                         placeholder="Contoh: Fokuskan kebersihan kamar mandi utama &amp; kaca ruang tamu">
                 </section>
             </div>
@@ -115,11 +156,14 @@ $pilih = $_GET['paket'] ?? 'standard';
                     <small class="text-muted2">Tarif dasar paket</small>
                     <div class="small text-muted2 mt-3"><i class="bi bi-geo-alt me-1"></i><span
                             id="sKec">–</span></div>
-                    <div class="d-flex justify-content-between align-items-end border-top mt-3 pt-3 mb-3"><strong>Total
-                            Bayar</strong><span class="total" id="sTotal">–</span></div>
+                    <div class="d-flex justify-content-between align-items-end border-top mt-3 pt-3 mb-3">
+                        <strong>Total
+                            Bayar</strong><span class="total" id="sTotal">–</span>
+                    </div>
                     <button type="submit" class="btn btn-primary w-100 py-2"><i
                             class="bi bi-arrow-right-circle me-1"></i>Lanjut ke Pembayaran</button>
-                    <p class="small text-muted2 text-center mt-3 mb-0"><i class="bi bi-shield-check"></i> Pesanan baru
+                    <p class="small text-muted2 text-center mt-3 mb-0"><i class="bi bi-shield-check"></i> Pesanan
+                        baru
                         diproses setelah pembayaran dikonfirmasi pada langkah berikutnya.</p>
                 </aside>
             </div>
