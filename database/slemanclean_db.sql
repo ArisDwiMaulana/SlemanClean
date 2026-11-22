@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: db
--- Generation Time: Nov 21, 2026 at 02:51 AM
+-- Generation Time: Nov 22, 2026 at 07:13 AM
 -- Server version: 8.0.46
 -- PHP Version: 8.3.33
 
@@ -111,7 +111,6 @@ INSERT INTO `pesanan` (`id`, `no_order`, `user_id`, `paket_id`, `kecamatan_id`, 
 (3, 'SC-20270125-8148', 2, 'standard', 3, 2, 2, 'Condongcatur, Depok', '2027-01-25', NULL, 120000, 'QRIS', 'Lunas', 'Selesai', '2026-11-19 12:50:54'),
 (4, 'SC-20270125-64EF', 2, 'standard', 3, 2, 1, 'Condongcatur, Depok', '2027-01-25', NULL, 120000, 'QRIS', 'Lunas', 'Diproses', '2026-11-19 12:50:54'),
 (5, 'SC-20261109-9942', 3, 'standard', 13, 1, 1, 'Jl. Prambanan No. 5', '2026-11-09', 'Bersihkan ruang tamu', 120000, 'Transfer Bank', 'Lunas', 'Diproses', '2026-11-19 12:50:54'),
-(6, 'SC-20261109-36AA', 4, 'standard', 3, 2, 2, 'Perum Condongcatur Asri B-4', '2026-11-09', NULL, 120000, 'QRIS', 'Lunas', 'Selesai', '2026-11-19 12:50:54'),
 (7, 'SC-20261121-81AF', 5, 'standard', 3, 1, 2, 'Kost putra amanah, Pugeran, Maguwoharjo', '2026-11-22', '', 120000, 'Transfer Bank', 'Lunas', 'Selesai', '2026-11-21 01:47:38');
 
 -- --------------------------------------------------------
@@ -174,6 +173,7 @@ CREATE TABLE `users` (
   `no_wa` varchar(20) COLLATE utf8mb4_unicode_ci NOT NULL,
   `kecamatan_asal` varchar(50) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `alamat_asal` text COLLATE utf8mb4_unicode_ci,
+  `foto_profil` varchar(255) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   `role` enum('admin','customer') COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT 'customer',
   `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
@@ -182,13 +182,12 @@ CREATE TABLE `users` (
 -- Dumping data for table `users`
 --
 
-INSERT INTO `users` (`id`, `nama`, `email`, `password`, `no_wa`, `kecamatan_asal`, `alamat_asal`, `role`, `created_at`) VALUES
-(1, 'Admin SlemanClean', 'admin@slemanclean.id', '$2y$10$oM0AXMzoyDpVXQahcMSI8OW1rnDNpNPILpItsltItiq2ixh0veU82', '081200000000', 'Depok', 'Kantor Operasional Depok, Sleman', 'admin', '2026-11-19 12:50:54'),
-(2, 'Siti Rahmawati', 'siti@gmail.com', '$2y$10$if/vCc2wWzPSM/kLaMjb1en4ByKs774HL8zloCCxpsTKJk.eca5E2', '085712345678', 'Kalasan', 'Jl. Solo KM 12, Kalasan, Sleman', 'customer', '2026-11-19 12:50:54'),
-(3, 'Doni Kusuma', 'doni@gmail.com', '$2y$10$if/vCc2wWzPSM/kLaMjb1en4ByKs774HL8zloCCxpsTKJk.eca5E2', '087890123456', 'Prambanan', 'Jl. Prambanan No. 5, Sleman', 'customer', '2026-11-19 12:50:54'),
-(4, 'Juned', 'juned@gmail.com', '$2y$10$if/vCc2wWzPSM/kLaMjb1en4ByKs774HL8zloCCxpsTKJk.eca5E2', '081234567890', 'Depok', 'Perum Condongcatur Asri B-4, Depok, Sleman', 'customer', '2026-11-19 12:50:54'),
-(5, 'mamat', 'mamat@gmail.com', '$2y$10$jseR914CYzVwxDC6r9gh0uCBEvr1JUF6xrtiry7E45AggIxUtyQ.a', '0812345678', 'Kalasan', 'Duri, Tirtomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571', 'customer', '2026-11-19 14:10:02'),
-(6, 'courage', 'courage@gmail.com', '$2y$10$gmPviohF8OYxhW5O8XIwhuAWviXofwkoMwh.qXwcJO3KDE1reUgwe', '08442432543346', 'Depok', 'Pugeran, Maguwoharjo, Depok, Sleman', 'customer', '2026-11-19 14:21:18');
+INSERT INTO `users` (`id`, `nama`, `email`, `password`, `no_wa`, `kecamatan_asal`, `alamat_asal`, `foto_profil`, `role`, `created_at`) VALUES
+(1, 'Admin SlemanClean', 'admin@slemanclean.id', '$2y$10$oM0AXMzoyDpVXQahcMSI8OW1rnDNpNPILpItsltItiq2ixh0veU82', '081200000000', 'Depok', 'Kantor Operasional Depok, Sleman', 'admin.webp', 'admin', '2026-11-19 12:50:54'),
+(2, 'Siti Rahmawati', 'siti@gmail.com', '$2y$10$if/vCc2wWzPSM/kLaMjb1en4ByKs774HL8zloCCxpsTKJk.eca5E2', '085712345678', 'Kalasan', 'Jl. Solo KM 12, Kalasan, Sleman', NULL, 'customer', '2026-11-19 12:50:54'),
+(3, 'Doni Kusuma', 'doni@gmail.com', '$2y$10$if/vCc2wWzPSM/kLaMjb1en4ByKs774HL8zloCCxpsTKJk.eca5E2', '087890123456', 'Prambanan', 'Jl. Prambanan No. 5, Sleman', NULL, 'customer', '2026-11-19 12:50:54'),
+(5, 'mamat', 'mamat@gmail.com', '$2y$10$jseR914CYzVwxDC6r9gh0uCBEvr1JUF6xrtiry7E45AggIxUtyQ.a', '0812345678', 'Kalasan', 'Duri, Tirtomartani, Kec. Kalasan, Kabupaten Sleman, Daerah Istimewa Yogyakarta 55571', NULL, 'customer', '2026-11-19 14:10:02'),
+(7, 'Tux', 'tux@gmail.com', '$2y$10$KbnTUMcsHXQt11NiAtyfC.UOEjJq7VJh1t2RD9wgdk.riT1HH5g6q', '938473247234', 'Turi', 'Turi, Sleman, DIY', '1795329497_6b028dd9329e1.png', 'customer', '2026-11-22 06:38:17');
 
 --
 -- Indexes for dumped tables
@@ -270,7 +269,7 @@ ALTER TABLE `tim_kebersihan`
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Constraints for dumped tables
