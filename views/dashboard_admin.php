@@ -195,15 +195,27 @@ $hitung = fn($s) => count(array_filter($orders, fn($o) => $o['status_pesanan'] =
                         <?php endif; ?>
                     </td>
                     <td>
-                        <form method="post" class="d-inline">
-                            <input type="hidden" name="aksi" value="toggle_tim">
-                            <input type="hidden" name="tim_id" value="<?= $t['id'] ?>">
-                            <?php if ($t['status_operasional'] === 'aktif'): ?>
-                            <button class="btn btn-sm btn-outline-danger" type="submit">Nonaktifkan</button>
-                            <?php else: ?>
-                            <button class="btn btn-sm btn-outline-success" type="submit">Aktifkan</button>
-                            <?php endif; ?>
-                        </form>
+                        <div class="d-flex align-items-center gap-1">
+                            <!-- 1. Tombol Toggle Aktif/Nonaktif (UPDATE) -->
+                            <form method="post" class="d-inline">
+                                <input type="hidden" name="aksi" value="toggle_tim">
+                                <input type="hidden" name="tim_id" value="<?= $t['id'] ?>">
+                                <?php if ($t['status_operasional'] === 'aktif'): ?>
+                                    <button class="btn btn-sm btn-outline-danger" type="submit" title="Nonaktifkan Tim">Nonaktifkan</button>
+                                <?php else: ?>
+                                    <button class="btn btn-sm btn-outline-success" type="submit" title="Aktifkan Tim">Aktifkan</button>
+                                <?php endif; ?>
+                            </form>
+                                    
+                            <!-- 2. Tombol Hapus Tim (DELETE) dengan Konfirmasi Popup -->
+                            <form method="post" class="d-inline" onsubmit="return confirm('Apakah Anda yakin ingin menghapus <?= htmlspecialchars($t['nama']) ?>? Data pesanan yang sudah ada tetap aman.');">
+                                <input type="hidden" name="aksi" value="hapus_tim">
+                                <input type="hidden" name="tim_id" value="<?= $t['id'] ?>">
+                                <button class="btn btn-sm btn-outline-danger" type="submit" title="Hapus Tim">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form>
+                        </div>
                     </td>
                     <?php endforeach; ?>
             </tbody>

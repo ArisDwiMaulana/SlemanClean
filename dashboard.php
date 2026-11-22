@@ -26,6 +26,14 @@ if ($user['role'] === 'admin' && $_SERVER['REQUEST_METHOD'] === 'POST') {
         header('Location: dashboard.php');
         exit();
     }
+    if ($aksi === 'hapus_tim') {
+        $tim_id = (int)($_POST['tim_id'] ?? 0);
+        if ($tim_id > 0) {
+            mysqli_query($koneksi, "DELETE FROM tim_kebersihan WHERE id = $tim_id");
+        }
+        header('Location: dashboard.php?sukses_hapus_tim=1');
+        exit;
+    }
 }
 
 $judul_halaman = 'Dashboard – SlemanClean';
