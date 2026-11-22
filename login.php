@@ -28,6 +28,7 @@ if (isset($_POST['login'])) {
                 'wa' => $user['no_wa'],
                 'kecamatan' => $user['kecamatan_asal'],
                 'alamat' => $user['alamat_asal'],
+                'foto_profil' => $user['foto_profil'] ?? null,
                 'role' => $user['role'], // 'admin' atau 'customer'
             ];
             header('Location: dashboard.php');

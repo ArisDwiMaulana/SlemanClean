@@ -19,7 +19,12 @@ $label = ['admin' => 'Super Admin', 'customer' => 'Pelanggan'];
             <div class="d-flex align-items-center gap-2">
                 <?php if ($u): ?>
                 <div class="nav-user d-flex align-items-center gap-2">
+                    <?php if (!empty($u['foto_profil']) && file_exists(__DIR__ . '/../uploads/' . $u['foto_profil'])): ?>
+                    <img src="uploads/<?= htmlspecialchars($u['foto_profil']) ?>" class="avatar"
+                        style="object-fit:cover;">
+                    <?php else: ?>
                     <span class="avatar"><?= strtoupper($u['nama'][0]) ?></span>
+                    <?php endif; ?>
                     <span class="lh-sm"><strong
                             class="small d-block"><?= htmlspecialchars($u['nama']) ?></strong><small
                             class="text-success"><?= $label[$u['role']] ?></small></span>
