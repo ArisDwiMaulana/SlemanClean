@@ -32,45 +32,54 @@ include __DIR__ . '/includes/header.php';
             </div>
 
             <!-- Kalkulator estimasi -->
-            <div class="col-lg-6" id="pesan">
-                <div class="calc p-4 p-md-4">
-                    <h2 class="h5 fw-bold mb-1">Hitung biaya pesanan</h2>
-                    <p class="text-muted2 small mb-3">Pilih paket dan slot waktu, harga langsung terlihat.</p>
+                <div class="col-lg-6" id="pesan">
+                    <form method="get" action="booking.php" class="calc p-4 p-md-4">
+                        <h2 class="h5 fw-bold mb-1">Hitung biaya pesanan</h2>
+                        <p class="text-muted2 small mb-3">Pilih paket dan slot waktu, harga langsung
+                        terlihat.</p>
 
-                    <div class="row g-2 mb-3">
-                        <div class="col-6">
-                            <label class="opt">
-                                <input class="form-check-input me-2" type="radio" name="paket" value="120000" checked>
-                                <strong>Standard</strong>
-                                <div class="small text-muted2 ps-4">±3 jam · Rp 120.000</div>
-                            </label>
+                        <div class="row g-2 mb-3">
+                            <div class="col-6">
+                                <label class="opt">
+                                    <input class="form-check-input me-2" type="radio" name="paket"
+                                    value="standard" data-harga="120000" checked>
+                                    <strong>Standard</strong>
+                                    <div class="small text-muted2 ps-4">±3 jam · Rp 120.000</div>
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                <label class="opt">
+                                    <input class="form-check-input me-2" type="radio" name="paket"
+                                    value="deep" data-harga="250000">
+                                    <strong>Deep Cleaning</strong>
+                                    <div class="small text-muted2 ps-4">±5 jam · Rp 250.000</div>
+                                </label>
+                            </div>
                         </div>
-                        <div class="col-6">
-                            <label class="opt">
-                                <input class="form-check-input me-2" type="radio" name="paket" value="250000">
-                                <strong>Deep Cleaning</strong>
-                                <div class="small text-muted2 ps-4">±5 jam · Rp 250.000</div>
-                            </label>
+
+                        <label class="form-label small fw-bold">Slot waktu</label>
+                        <div class="btn-group w-100 mb-4" role="group">
+                            <input type="radio" class="btn-check" name="slot" id="s1" value="1" checked>
+                            <label class="btn btn-outline-primary" for="s1">Pagi 08.00</label>
+
+                            <input type="radio" class="btn-check" name="slot" id="s2" value="2">
+                            <label class="btn btn-outline-primary" for="s2">Siang 13.00</label>
+
+                            <input type="radio" class="btn-check" name="slot" id="s3" value="3">
+                            <label class="btn btn-outline-primary" for="s3">Sore 16.30</label>
                         </div>
-                    </div>
 
-                    <label class="form-label small fw-bold">Slot waktu</label>
-                    <div class="btn-group w-100 mb-4" role="group">
-                        <input type="radio" class="btn-check" name="slot" id="s1" checked>
-                        <label class="btn btn-outline-primary" for="s1">Pagi 08.00</label>
-                        <input type="radio" class="btn-check" name="slot" id="s2">
-                        <label class="btn btn-outline-primary" for="s2">Siang 13.00</label>
-                        <input type="radio" class="btn-check" name="slot" id="s3">
-                        <label class="btn btn-outline-primary" for="s3">Sore 16.30</label>
-                    </div>
+                        <div class="d-flex justify-content-between align-items-end border-top pt-2 mb-3">
+                            <span class="fw-bold">Total</span>
+                            <span class="total" id="rTotal">Rp 120.000</span>
+                        </div>
 
-                    <div class="d-flex justify-content-between align-items-end border-top pt-2 mb-3">
-                        <span class="fw-bold">Total</span><span class="total" id="rTotal">Rp 120.000</span>
-                    </div>
-                    <a href="booking.php" class="btn btn-primary w-100 py-2 rounded-pill">Lanjut ke pemesanan <i
-                            class="bi bi-arrow-right ms-1"></i></a>
+                        <!-- Tombol submit form menuju booking.php -->
+                        <button type="submit" class="btn btn-primary w-100 py-2 rounded-pill">
+                            Lanjut ke pemesanan <i class="bi bi-arrow-right ms-1"></i>
+                        </button>
+                    </form>
                 </div>
-            </div>
         </div>
     </div>
 </header>
