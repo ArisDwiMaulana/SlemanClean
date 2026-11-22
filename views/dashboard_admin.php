@@ -44,14 +44,54 @@ $hitung = fn($s) => count(array_filter($orders, fn($o) => $o['status_pesanan'] =
             class="bi bi-person-plus me-1"></i>Tambah Tim Baru</button>
 </div>
 <div class="row g-3 mb-4">
-    <?php foreach ([['Omzet Simulasi', rupiah($omzet), 'Total akumulasi transaksi non-batal'], ['Total Transaksi', count($orders), 'Pesanan dari seluruh 17 kecamatan'],
-      ['Progres Layanan', $hitung('Diproses') . ' diproses / ' . $hitung('Selesai') . ' selesai', $hitung('Dibatalkan') . ' pesanan dibatalkan'], ['Armada Tim', count($tim), 'Tim pembersih siap operasional']] as [$t, $n, $d]): ?>
+    <!-- Kartu 1: Omzet Simulasi -->
     <div class="col-md-6 col-lg-3">
-        <div class="panel stat p-3 h-100"><small class="text-muted2 fw-bold text-uppercase"><?= $t ?></small>
-            <div class="num fs-3 mt-2"><?= $n ?></div><small class="text-muted2"><?= $d ?></small>
+        <div class="panel stat p-3 h-100">
+            <small class="text-muted2 fw-bold text-uppercase">Omzet Simulasi</small>
+            <div class="num fs-3 mt-2 text-success"><?= rupiah($omzet) ?></div>
+            <small class="text-muted2">Akumulasi pesanan non-batal</small>
         </div>
     </div>
-    <?php endforeach; ?>
+
+    <!-- Kartu 2: Total Transaksi -->
+    <div class="col-md-6 col-lg-3">
+        <div class="panel stat p-3 h-100">
+            <small class="text-muted2 fw-bold text-uppercase">Total Transaksi</small>
+            <div class="num fs-3 mt-2"><?= count($orders) ?></div>
+            <small class="text-muted2">Pesanan dari seluruh 17 kecamatan</small>
+        </div>
+    </div>
+
+    <!-- Kartu 3: Progres Layanan (3 Status dengan Ukuran Sama Rata) -->
+    <div class="col-md-6 col-lg-3">
+        <div class="panel stat p-3 h-100 d-flex flex-column justify-content-between">
+            <small class="text-muted2 fw-bold text-uppercase">Progres Layanan</small>
+
+            <div class="d-flex justify-content-between text-center my-1 py-1">
+                <div>
+                    <div class="fw-bold fs-5 text-warning"><?= $hitung('Diproses') ?></div>
+                    <small class="text-muted2">Diproses</small>
+                </div>
+                <div class="border-start border-end px-2">
+                    <div class="fw-bold fs-5 text-success"><?= $hitung('Selesai') ?></div>
+                    <small class="text-muted2">Selesai</small>
+                </div>
+                <div>
+                    <div class="fw-bold fs-5 text-danger"><?= $hitung('Dibatalkan') ?></div>
+                    <small class="text-muted2">Dibatalkan</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Kartu 4: Armada Tim -->
+    <div class="col-md-6 col-lg-3">
+        <div class="panel stat p-3 h-100">
+            <small class="text-muted2 fw-bold text-uppercase">Armada Tim</small>
+            <div class="num fs-3 mt-2"><?= count($tim) ?></div>
+            <small class="text-muted2">Tim pembersih siap operasional</small>
+        </div>
+    </div>
 </div>
 
 <section class="panel overflow-hidden mb-4">

@@ -53,9 +53,8 @@ include __DIR__ . '/includes/header.php';
         <?php if ($error): ?><div class="alert alert-danger text-start mt-3 mb-0"><i
                 class="bi bi-exclamation-circle-fill me-1"></i> <?= $error ?></div><?php endif; ?>
 
-        <!-- TODO backend: proses di login.php (POST: username/email, password) -->
         <form method="post" class="panel p-4 text-start my-4">
-            <label class="lbl mb-1" for="username">Email / Username <span class="text-danger">*</span></label>
+            <label class="lbl mb-1" for="username">Email <span class="text-danger">*</span></label>
             <div class="input-group mb-3"><span class="input-group-text"><i class="bi bi-person"></i></span>
                 <input type="text" id="username" name="username" class="form-control" placeholder="nama@email.com"
                     autocomplete="username" required>
