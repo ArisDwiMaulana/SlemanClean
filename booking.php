@@ -4,6 +4,11 @@ require_once __DIR__ . '/koneksi.php';
 require_login();
 $user = current_user();
 
+if ($user['role'] == 'admin') {
+    header('location: dashboard.php');
+    exit();
+}
+
 // Ambil data paket
 $res_pkt = mysqli_query($koneksi, 'SELECT * FROM paket_layanan');
 $paket = [];
